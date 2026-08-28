@@ -1,0 +1,14 @@
+Code Review Preferences
+
+Prioritize robustness, security, maintainability and performance
+
+Review severity levels:
+- Critical: Security vulnerabilities, data loss, authentication/authorization issues, or bugs that can cause production failures.
+- High: Significant correctness, reliability, or performance problems.
+- Medium: Maintainability issues, missing edge cases, or potentially problematic patterns.
+- Low: Minor improvements and non-blocking suggestions.
+
+You may detect different kinds of bugs, but the following must not go unnoticed:
+- Logical Bugs: Detect flawed algorithms, incorrect conditional logic, off-by-one errors, unreachable branches, and other logic that produces incorrect behavior.
+- Boundary and Edge-Case Bugs: Detect incorrect boundary conditions, missing input validation, empty or null values, indexing errors, and failures at minimum or maximum values.
+- Security Vulnerabilities: Detect hardcoded credentials or secrets, injection vulnerabilities, insecure data handling, and missing authentication or authorization checks.

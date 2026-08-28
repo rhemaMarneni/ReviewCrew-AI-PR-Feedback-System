@@ -1,0 +1,133 @@
+frontend_review_task:
+  description: >
+    Review the frontend code for {project_name} according to the frontend reviewer's
+    expertise and the project requirements.
+
+    Project requirements:
+    {project_requirements}
+
+    Code to review:
+    {code}
+
+    Focus only on frontend and UX concerns. If you notice an issue that clearly
+    belongs to another reviewer, note it briefly as out of scope.
+  expected_output: >
+    A markdown frontend review containing:
+    1. A short summary
+    2. Findings with title, severity, location, issue, impact, and recommendation
+    3. Frontend strengths worth preserving
+    4. Out-of-scope findings for other reviewers
+
+    Return markdown only.
+  agent: frontend_reviewer
+  markdown: true
+  output_file: output/frontend_review.md
+
+backend_review_task:
+  description: >
+    Review the backend code for {project_name} according to the backend reviewer's
+    expertise and the project requirements.
+
+    Project requirements:
+    {project_requirements}
+
+    Code to review:
+    {code}
+
+    Focus only on backend concerns. If you notice an issue that clearly belongs
+    to another reviewer, note it briefly as out of scope.
+  expected_output: >
+    A markdown backend review containing:
+    1. A short summary
+    2. Findings with title, severity, location, issue, impact, and recommendation
+    3. Backend strengths worth preserving
+    4. Out-of-scope findings for other reviewers
+
+    Return markdown only.
+  agent: backend_reviewer
+  markdown: true
+  output_file: output/backend_review.md
+
+security_review_task:
+  description: >
+    Review the security of {project_name} according to the security reviewer's
+    expertise and the project requirements.
+
+    Project requirements:
+    {project_requirements}
+
+    Code to review:
+    {code}
+
+    Focus only on security concerns. If you notice an issue that clearly belongs
+    to another reviewer, note it briefly as out of scope.
+  expected_output: >
+    A markdown security review containing:
+    1. A short summary
+    2. Findings with title, severity, location, issue, impact, and recommendation
+    3. Security strengths worth preserving
+    4. Out-of-scope findings for other reviewers
+
+    Return markdown only.
+  agent: security_reviewer
+  markdown: true
+  output_file: output/security_review.md
+
+test_review_task:
+  description: >
+    Review the tests and testability of {project_name} according to the test
+    reviewer's expertise and the project requirements.
+
+    Project requirements:
+    {project_requirements}
+
+    Code to review:
+    {code}
+
+    Focus only on testing concerns. If you notice an issue that clearly belongs
+    to another reviewer, note it briefly as out of scope.
+  expected_output: >
+    A markdown test review containing:
+    1. A short summary
+    2. Findings with title, severity, location, issue, impact, and recommendation
+    3. Testing strengths worth preserving
+    4. Out-of-scope findings for other reviewers
+
+    Return markdown only.
+  agent: test_reviewer
+  markdown: true
+  output_file: output/test_review.md
+
+lead_review_task:
+  description: >
+    Review the overall system design and architecture of {project_name} according
+    to the lead reviewer's expertise, the project requirements, and the specialist
+    reviews.
+
+    Project requirements:
+    {project_requirements}
+
+    Code to review:
+    {code}
+
+    You may agree or disagree with specialist findings and explain why, but do
+    not modify or overwrite them. Preserve the originals and add your assessment
+    separately. Focus on how components fit together rather than duplicating
+    specialist reviews.
+  expected_output: >
+    A markdown lead review containing:
+    1. A short summary
+    2. Architecture findings with title, severity, location, issue, impact, and recommendation
+    3. Assessment of specialist findings without editing the originals
+    4. Original specialist reviews preserved verbatim
+    5. Cross-cutting findings and prioritized recommendations
+
+    Return markdown only.
+  agent: lead_reviewer
+  markdown: true
+  context:
+    - frontend_review_task
+    - backend_review_task
+    - security_review_task
+    - test_review_task
+  output_file: output/review.md
