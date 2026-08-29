@@ -33,9 +33,17 @@ class GithubClient:
         """Get the files changed in a pull request."""
         self._require_pr_metadata()
         url = f"{BASE_URL}/repos/{self.owner}/{self.repo_name}/pulls/{self.pr_number}/files"
-        response = requests.get(url, headers=self.headers)
-        response.raise_for_status()
-        return response.json()
+        files = []
+        while url:
+            response = requests.get(
+                url,
+                headers=self.headers,
+                params={"per_page": 100},
+            )
+            response.raise_for_status()
+            files.extend(response.json())
+            url = response.links.get("next", {}).get("url")
+        return files
 
     def get_repo_tree(self):
         """Get the tree of a repository at PR's head commit."""
