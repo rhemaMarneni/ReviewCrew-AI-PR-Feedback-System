@@ -15,7 +15,7 @@ class ReviewCrew():
     @agent
     def frontend_reviewer(self) -> Agent:
         return Agent(
-            config=self.agents_config['frontend_reviewer'], # type: ignore[index]
+            config=self.agents_config['frontend_reviewer'],
             verbose=True
         )
 
@@ -84,8 +84,8 @@ class ReviewCrew():
         """Creates the ReviewCrew crew"""
 
         return Crew(
-            agents=self.agents, # Automatically created by the @agent decorator
-            tasks=self.tasks, # Automatically created by the @task decorator
+            agents=self.agents,
+            tasks=self.tasks,
             # process=Process.sequential,
             verbose=True,
             process=Process.hierarchical,

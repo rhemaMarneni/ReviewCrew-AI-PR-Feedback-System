@@ -15,9 +15,15 @@ warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
 requirements = """
 A simple user interface for AI based code review on a software project.
-Given a Git repository URL, the user should be able to upload the codebase and get feedback on the codebase.
+The application takes a GitHub Pull Request URL as input.
 
-
+From the Pull Request URL, the application:
+1. Identifies the repository, owner, and pull request number.
+2. Retrieves pull request metadata and changed files using the GitHub API.
+3. Retrieves the repository tree at the pull request's head commit.
+4. Provides agents with tools to retrieve additional file contents when needed.
+5. Analyzes the pull request using specialized code reviewers.
+6. Produces a consolidated code review.
 """
 
 def run():
