@@ -36,7 +36,7 @@ def run():
     }
 
     try:
-        ReviewCrew().crew().kickoff(inputs=inputs)
+        return ReviewCrew().crew().kickoff(inputs=inputs)
     except Exception as e:
         raise Exception(f"An error occurred while running the crew: {e}")
 
