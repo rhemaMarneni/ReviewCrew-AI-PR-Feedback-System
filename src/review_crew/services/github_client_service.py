@@ -22,6 +22,8 @@ class GithubClient:
         response = requests.get(url, headers=self.headers)
         response.raise_for_status()
         self.pr_metadata = response.json()
+        print("Fetched PR metadata")
+        print(self.pr_metadata)
         return self.pr_metadata
 
     def _require_pr_metadata(self):
@@ -43,6 +45,7 @@ class GithubClient:
             response.raise_for_status()
             files.extend(response.json())
             url = response.links.get("next", {}).get("url")
+        print("Fetched files from the PR")
         return files
 
     def get_repo_tree(self):
@@ -52,6 +55,7 @@ class GithubClient:
         url = f"{BASE_URL}/repos/{self.owner}/{self.repo_name}/git/trees/{ref}"
         response = requests.get(url, headers=self.headers, params={"recursive": "1"})
         response.raise_for_status()
+        print("Fetched tree from the PR")
         return response.json()
 
     def get_file(self, path: str, ref: str):
@@ -63,4 +67,5 @@ class GithubClient:
             params={"ref": ref},
         )
         response.raise_for_status()
+        print("Requesting a file...", path)
         return base64.b64decode(response.json()["content"]).decode("utf-8")
