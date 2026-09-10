@@ -1,6 +1,8 @@
 import gradio as gr
 from dotenv import load_dotenv
 
+from review_crew.main import run
+
 class ReviewCrewApp:
     def __init__(self):
         self.app = gr.Interface(
@@ -8,8 +10,18 @@ class ReviewCrewApp:
             inputs=[
                 gr.Textbox(
                     lines=1,
+                    placeholder="ReviewCrew",
+                    label="Enter Project Name",
+                ),
+                gr.Textbox(
+                    lines=1,
                     placeholder="https://github.com/owner/repository/pull/123",
                     label="GitHub Pull Request URL",
+                ),
+                gr.Textbox(
+                    lines=5,
+                    placeholder="The project is a web application that allows users to review code...",
+                    label="Give a small Project description for which this review is being done.",
                 ),
             ],
             outputs=gr.Markdown(),
@@ -17,8 +29,9 @@ class ReviewCrewApp:
             description="Enter a GitHub Pull Request URL to run an AI-assisted code review.",
         )
 
-    def review_crew(self, pr_url: str, auth_token: str):
-        return f"Review requested for: {pr_url}"
+    def review_crew(self, pr_url: str, project_name: str, project_description: str):
+        result = run(pr_url, project_name, project_description)
+        return result.raw
 
     def launch(self):
         self.app.launch()

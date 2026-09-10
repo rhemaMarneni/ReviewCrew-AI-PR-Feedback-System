@@ -26,17 +26,20 @@ From the Pull Request URL, the application:
 6. Produces a consolidated code review.
 """
 
-def run():
+def run(pr_url: str, project_name: str, project_description: str):
     """
     Run the crew.
     """
     inputs = {
+        'pr_url': pr_url,
+        'project_name': project_name,
+        'project_description': project_description,
         'requirements': requirements,
         'current_year': str(datetime.now().year)
     }
 
     try:
-        ReviewCrew().crew().kickoff(inputs=inputs)
+        return ReviewCrew().crew().kickoff(inputs=inputs)
     except Exception as e:
         raise Exception(f"An error occurred while running the crew: {e}")
 

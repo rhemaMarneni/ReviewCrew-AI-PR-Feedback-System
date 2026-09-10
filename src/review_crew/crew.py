@@ -34,7 +34,14 @@ class ReviewCrew():
         )
 
     @agent
-    def senior_reviewer(self) -> Agent:
+    def test_reviewer(self) -> Agent:
+        return Agent(
+            config=self.agents_config['test_reviewer'],
+            verbose=True
+        )
+
+    @agent
+    def lead_reviewer(self) -> Agent:
         return Agent(
             config=self.agents_config['lead_reviewer'],
             verbose=True
@@ -86,7 +93,7 @@ class ReviewCrew():
         return Crew(
             agents=self.agents,
             tasks=self.tasks,
-            # process=Process.sequential,
+            process=Process.sequential,
             verbose=True,
-            process=Process.hierarchical,
+            # process=Process.hierarchical,
         )
