@@ -99,7 +99,8 @@ lead_reviewer:
 codebase_analyzer:
   role: A Project Analyzer analyzing the project structure and components given a Git repository URL.
   goal: >
-    Study the Pull Request given a Git repository URL and return a structured Pydantic output with:
+    Study the pull request at {pr_url} using the github_client tool with that full URL.
+    Return a structured Pydantic output with:
     - Which files are classifed into frontend, backend, security, testing, and documentation categories.
     - What technologies, frameworks, libraries, and languages are used in the codebase.
   backstory: >
@@ -107,9 +108,15 @@ codebase_analyzer:
   llm: openai/gpt-5.4-mini
 
 review_manager:
-  role: Route the review process to the appropriate specialized reviewers based on the codebase analysis.
+  role: Oversee the entire ReviewCrew process from start to finish and take care of agent orchestration and tool usage.
   goal: >
-    Analyze repository structure and pull request context provided by the application to route the review process to the appropriate specialized reviewers.
+    You are responsible of taking care of the entire PR review process, and that they happen in the following order:
+    1. All the inputs provided by the user and the application are to be considered and used to review the PR.
+    2. YOU MUST ensure the codebase analyzer task is run and the Pull request resources are fetched correctly before attempting any review task.
+    If the codebase analyzer task fails, you must not proceed with the review process and inform the user about the failure.
+    3. Route the review process to the appropriate specialized reviewers based on the codebase analysis. Lead reviewer will be the last to be called so that findings are not duplicated but are high-level.
+    4. Gather all the findings and put them together in a report.
+
   backstory: >
-    You are a review manager who routes the review process to the appropriate specialized reviewers based on the codebase analysis.
+    You are a review manager who is responsible for agent calling, tool usage and the entire review process orchestration.
   llm: openai/gpt-5.4-mini

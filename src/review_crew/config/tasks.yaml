@@ -3,11 +3,8 @@ frontend_review_task:
     Review the frontend code for {project_name} according to the frontend reviewer's
     expertise and the project requirements.
 
-    Project requirements:
-    {project_requirements}
-
-    Code to review:
-    {code}
+    Project description:
+    {project_description}
 
     Focus only on frontend and UX concerns. If you notice an issue that clearly
     belongs to another reviewer, note it briefly as out of scope.
@@ -28,11 +25,8 @@ backend_review_task:
     Review the backend code for {project_name} according to the backend reviewer's
     expertise and the project requirements.
 
-    Project requirements:
-    {project_requirements}
-
-    Code to review:
-    {code}
+    Project description:
+    {project_description}
 
     Focus only on backend concerns. If you notice an issue that clearly belongs
     to another reviewer, note it briefly as out of scope.
@@ -53,11 +47,8 @@ security_review_task:
     Review the security of {project_name} according to the security reviewer's
     expertise and the project requirements.
 
-    Project requirements:
-    {project_requirements}
-
-    Code to review:
-    {code}
+    Project description:
+    {project_description}
 
     Focus only on security concerns. If you notice an issue that clearly belongs
     to another reviewer, note it briefly as out of scope.
@@ -78,11 +69,8 @@ test_review_task:
     Review the tests and testability of {project_name} according to the test
     reviewer's expertise and the project requirements.
 
-    Project requirements:
-    {project_requirements}
-
-    Code to review:
-    {code}
+    Project description:
+    {project_description}
 
     Focus only on testing concerns. If you notice an issue that clearly belongs
     to another reviewer, note it briefly as out of scope.
@@ -104,11 +92,8 @@ lead_review_task:
     to the lead reviewer's expertise, the project requirements, and the specialist
     reviews.
 
-    Project requirements:
-    {project_requirements}
-
-    Code to review:
-    {code}
+    Project description:
+    {project_description}
 
     You may agree or disagree with specialist findings and explain why, but do
     not modify or overwrite them. Preserve the originals and add your assessment
@@ -131,3 +116,37 @@ lead_review_task:
     - security_review_task
     - test_review_task
   output_file: output/review.md
+
+codebase_analyzer_task:
+  description: >
+    Analyze the repository and pull request at this exact URL: {pr_url}
+
+    Use the github_client tool and pass that full pr_url on every call.
+    Do not shorten it to https://github.com/ or invent a different URL.
+
+    Classify files and identify technologies, frameworks, libraries, and languages.
+  expected_output: >
+    A structured Pydantic output with:
+    - Which files are classifed into frontend, backend, security, testing, and documentation categories.
+    - What technologies, frameworks, libraries, and languages are used in the codebase.
+  agent: codebase_analyzer
+  markdown: true
+  output_file: output/codebase_analyzer.md
+
+review_manager_task:
+  description: >
+    Oversee and direct the review process from start to finish by routing the process to the appropriate agents and tasks.
+  expected_output: >
+    You are NOT supposed to review the code in any capacity.
+    Generate a final markdown containing:
+    - Project Name
+    - The findings of the specialized reviewers separated by sections with the lead reviewer's findings at the end.
+    - A final section specifying: --> needs to be done by the lead reviewer
+      - Whether the Pull Request is ready to be merged or declined.
+      - Whether there are any issues that need to be addressed or not.
+      - Merge conflicts if any.
+  agent: review_manager
+  markdown: true
+  output_file: output/review_manager.md
+
+   each section should have a title, a "Review Severity level" as Critical, High, Medium, Low and a summary of the findings.
