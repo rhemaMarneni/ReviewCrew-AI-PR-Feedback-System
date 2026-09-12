@@ -12,7 +12,7 @@ class ReviewCrewApp:
             inputs=[
                 gr.Textbox(
                     lines=1,
-                    placeholder="ReviewCrew",
+                    placeholder="Project Name",
                     label="Enter Project Name",
                 ),
                 gr.Textbox(

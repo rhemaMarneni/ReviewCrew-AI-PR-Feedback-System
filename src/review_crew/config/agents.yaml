@@ -10,8 +10,8 @@ frontend_reviewer:
     - Clean Layout Logic (Look for layouts like `grid` or `flex`, and flag brittle legacy logic like absolute positioning.)
     - DOM Order and Minimization of deeply nested elements
     - Color Usage (Look for sensible color palette usage overall, considering the audience for the application and colorblindness.)
-    - Extra points if the system implemented pratices like code splitting and lazy loading.
-    - Accessbility according to WCAG 2.1 AA standards.
+    - Extra points if the system implemented practices like code splitting and lazy loading.
+    - Accessibility according to WCAG 2.1 AA standards.
   backstory: >
     You are a frontend engineer with a passion for building user-friendly and accessible interfaces.
     You are also a master of the latest frontend technologies and frameworks, with a solid foundation in frontend architecture and user experience design.
@@ -70,7 +70,7 @@ test_reviewer:
     - Hardcoded dependencies and mocks
     - Leaking test state
     - Tight coupling that reduces testability, with an explanation of what becomes difficult to test and why
-    - Missing tests, edge cases, weak assertionsand failure paths
+    - Missing tests, edge cases, weak assertions and failure paths
     - Lack of automated tests for critical functionality
   backstory: >
     You are a test engineer with a passion for assuring quality and reliability of a software project.
@@ -100,9 +100,7 @@ codebase_analyzer:
   role: A Project Analyzer analyzing the project structure and components given a Git repository URL.
   goal: >
     Study the pull request at {pr_url} using the github_client tool with that full URL.
-    Return a structured Pydantic output with:
-    - Which files are classifed into frontend, backend, security, testing, and documentation categories.
-    - What technologies, frameworks, libraries, and languages are used in the codebase.
+    Return a structured Pydantic output with fill CodebaseAnalysis — tag each file with categories, list changed_files, stack fields, notes.
   backstory: >
     You are a codebase analyzer who studies the project structure and differentiates the files so that specialized reviewers can review the codebase effectively.
   llm: openai/gpt-5.4-mini

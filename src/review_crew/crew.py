@@ -3,6 +3,7 @@ from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from review_crew.services.github_client_service import GithubClientTool
+from review_crew.models.report import CodebaseAnalysis, SpecialistReview, LeadReview, Report
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
@@ -14,32 +15,42 @@ class ReviewCrew():
     agents: list[BaseAgent]
     tasks: list[Task]
 
+    def _github_tool(self) -> GithubClientTool:
+        token = os.getenv('GITHUB_TOKEN')
+        if not token:
+            raise ValueError("GITHUB_TOKEN is not set. Add it to review_crew/.env")
+        return GithubClientTool(token=token)
+
     @agent
     def frontend_reviewer(self) -> Agent:
         return Agent(
             config=self.agents_config['frontend_reviewer'],
-            verbose=True
+            verbose=True,
+            tools=[self._github_tool()],
         )
 
     @agent
     def backend_reviewer(self) -> Agent:
         return Agent(
             config=self.agents_config['backend_reviewer'],
-            verbose=True
+            verbose=True,
+            tools=[self._github_tool()],
         )
 
     @agent
     def security_reviewer(self) -> Agent:
         return Agent(
             config=self.agents_config['security_reviewer'],
-            verbose=True
+            verbose=True,
+            tools=[self._github_tool()],
         )
 
     @agent
     def test_reviewer(self) -> Agent:
         return Agent(
             config=self.agents_config['test_reviewer'],
-            verbose=True
+            verbose=True,
+            tools=[self._github_tool()],
         )
 
     @agent
@@ -47,17 +58,15 @@ class ReviewCrew():
         return Agent(
             config=self.agents_config['lead_reviewer'],
             verbose=True,
+            tools=[self._github_tool()],
         )
 
     @agent
     def codebase_analyzer(self) -> Agent:
-        token = os.getenv('GITHUB_TOKEN')
-        if not token:
-            raise ValueError("GITHUB_TOKEN is not set. Add it to review_crew/.env")
         return Agent(
             config=self.agents_config['codebase_analyzer'],
             verbose=True,
-            tools=[GithubClientTool(token=token)]
+            tools=[self._github_tool()],
         )
 
     @agent
@@ -72,7 +81,7 @@ class ReviewCrew():
         return Task(
             config=self.tasks_config['frontend_review_task'],
             verbose=True,
-            output_file='output/frontend_review.md',
+            output_pydantic=SpecialistReview,
         )
 
     @task
@@ -80,7 +89,7 @@ class ReviewCrew():
         return Task(
             config=self.tasks_config['backend_review_task'],
             verbose=True,
-            output_file='output/backend_review.md'
+            output_pydantic=SpecialistReview,
         )
 
     @task
@@ -88,7 +97,7 @@ class ReviewCrew():
         return Task(
             config=self.tasks_config['security_review_task'],
             verbose=True,
-            output_file='output/security_review.md'
+            output_pydantic=SpecialistReview,
         )
 
     @task
@@ -96,7 +105,7 @@ class ReviewCrew():
         return Task(
             config=self.tasks_config['test_review_task'],
             verbose=True,
-            output_file='output/test_review.md'
+            output_pydantic=SpecialistReview,
         )
 
     @task
@@ -104,8 +113,7 @@ class ReviewCrew():
         return Task(
             config=self.tasks_config['lead_review_task'],
             verbose=True,
-            output_file='output/lead_review.md',
-            output_pydantic=LeadReviewReport
+            output_pydantic=LeadReview,
         )
 
     @task
@@ -113,6 +121,7 @@ class ReviewCrew():
         return Task(
             config=self.tasks_config['codebase_analyzer_task'],
             verbose=True,
+            output_pydantic=CodebaseAnalysis,
         )
 
     @task
@@ -120,6 +129,7 @@ class ReviewCrew():
         return Task(
             config=self.tasks_config['review_manager_task'],
             verbose=True,
+            output_pydantic=Report,
         )
 
     @crew

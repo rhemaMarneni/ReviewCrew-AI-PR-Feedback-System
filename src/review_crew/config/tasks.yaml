@@ -1,152 +1,122 @@
 frontend_review_task:
   description: >
-    Review the frontend code for {project_name} according to the frontend reviewer's
+    Review the frontend code for the given GitHub Pull Request URL according to the frontend reviewer's
     expertise and the project requirements.
 
-    Project description:
-    {project_description}
+    Project Information:
+    {project_info}
 
-    Focus only on frontend and UX concerns. If you notice an issue that clearly
-    belongs to another reviewer, note it briefly as out of scope.
+    {file_review_instructions}
+    If there are no frontend files, say so and return no invented findings.
+
+    Focus only on frontend and UX concerns, and do not regard anything that is out of scope a the frontend engineer.
   expected_output: >
-    A markdown frontend review containing:
-    1. A short summary
-    2. Findings with title, severity, location, issue, impact, and recommendation
-    3. Frontend strengths worth preserving
-    4. Out-of-scope findings for other reviewers
+    {specialist_expected_output}
 
-    Return markdown only.
   agent: frontend_reviewer
-  markdown: true
-  output_file: output/frontend_review.md
+  context:
+    - codebase_analyzer_task
 
 backend_review_task:
   description: >
-    Review the backend code for {project_name} according to the backend reviewer's
+    Review the backend code for the given GitHub Pull Request URL according to the backend reviewer's
     expertise and the project requirements.
 
-    Project description:
-    {project_description}
+    Project Information:
+    {project_info}
 
-    Focus only on backend concerns. If you notice an issue that clearly belongs
-    to another reviewer, note it briefly as out of scope.
+    {file_review_instructions}
+    If there are no backend files, say so and return no invented findings.
+
+    Focus only on backend concerns, and do not regard anything that is out of scope a the backend engineer.
   expected_output: >
-    A markdown backend review containing:
-    1. A short summary
-    2. Findings with title, severity, location, issue, impact, and recommendation
-    3. Backend strengths worth preserving
-    4. Out-of-scope findings for other reviewers
+    {specialist_expected_output}
 
-    Return markdown only.
   agent: backend_reviewer
-  markdown: true
-  output_file: output/backend_review.md
+  context:
+    - codebase_analyzer_task
 
 security_review_task:
   description: >
-    Review the security of {project_name} according to the security reviewer's
+    Review the security of the given GitHub Pull Request URL according to the security reviewer's
     expertise and the project requirements.
 
-    Project description:
-    {project_description}
+    Project Information:
+    {project_info}
 
-    Focus only on security concerns. If you notice an issue that clearly belongs
-    to another reviewer, note it briefly as out of scope.
+    {file_review_instructions}
+    If there are no security-relevant files, say so and return no invented findings.
+
+    Focus only on security concerns, and do not regard anything that is out of scope a the security engineer.
   expected_output: >
-    A markdown security review containing:
-    1. A short summary
-    2. Findings with title, severity, location, issue, impact, and recommendation
-    3. Security strengths worth preserving
-    4. Out-of-scope findings for other reviewers
+    {specialist_expected_output}
 
-    Return markdown only.
   agent: security_reviewer
-  markdown: true
-  output_file: output/security_review.md
+  context:
+    - codebase_analyzer_task
 
 test_review_task:
   description: >
-    Review the tests and testability of {project_name} according to the test
+    Review the tests and testability of the given GitHub Pull Request URL according to the test
     reviewer's expertise and the project requirements.
 
-    Project description:
-    {project_description}
+    Project Information:
+    {project_info}
 
-    Focus only on testing concerns. If you notice an issue that clearly belongs
-    to another reviewer, note it briefly as out of scope.
+    {file_review_instructions}
+    If there are no test files, review testability of the changed code you can fetch, or say coverage is missing.
+
+    Focus only on testing concerns, and do not regard anything that is out of scope a the test engineer.
   expected_output: >
-    A markdown test review containing:
-    1. A short summary
-    2. Findings with title, severity, location, issue, impact, and recommendation
-    3. Testing strengths worth preserving
-    4. Out-of-scope findings for other reviewers
+    {specialist_expected_output}
 
-    Return markdown only.
   agent: test_reviewer
-  markdown: true
-  output_file: output/test_review.md
+  context:
+    - codebase_analyzer_task
 
 lead_review_task:
   description: >
-    Review the overall system design and architecture of {project_name} according
+    Review the overall system design and architecture of the project specified in the project description according
     to the lead reviewer's expertise, the project requirements, and the specialist
     reviews.
 
-    Project description:
-    {project_description}
+    Project Information:
+    {project_info}
+
+    Use the codebase analysis and specialist reviews. If you need to verify a
+    cross-cutting claim, read the file with github_client: action=get_file and pr_url={pr_url}.
 
     You may agree or disagree with specialist findings and explain why, but do
     not modify or overwrite them. Preserve the originals and add your assessment
     separately. Focus on how components fit together rather than duplicating
     specialist reviews.
   expected_output: >
-    A markdown lead review containing:
-    1. A short summary
-    2. Architecture findings with title, severity, location, issue, impact, and recommendation
-    3. Assessment of specialist findings without editing the originals
-    4. Original specialist reviews preserved verbatim
-    5. Cross-cutting findings and prioritized recommendations
+    A LeadReview Pydantic output.
 
-    Return markdown only.
   agent: lead_reviewer
-  markdown: true
   context:
+    - codebase_analyzer_task
     - frontend_review_task
     - backend_review_task
     - security_review_task
     - test_review_task
-  output_file: output/review.md
 
 codebase_analyzer_task:
   description: >
-    Analyze the repository and pull request at this exact URL: {pr_url}
+    Analyze the repository and pull request at the exact URL found in the project information: {project_info}
 
     Use the github_client tool and pass that full pr_url on every call.
     Do not shorten it to https://github.com/ or invent a different URL.
 
     Classify files and identify technologies, frameworks, libraries, and languages.
   expected_output: >
-    A structured Pydantic output with:
-    - Which files are classifed into frontend, backend, security, testing, and documentation categories.
-    - What technologies, frameworks, libraries, and languages are used in the codebase.
+    A CodebaseAnalysis Pydantic output.
   agent: codebase_analyzer
-  markdown: true
-  output_file: output/codebase_analyzer.md
 
 review_manager_task:
   description: >
     Oversee and direct the review process from start to finish by routing the process to the appropriate agents and tasks.
   expected_output: >
+    Copy completed specialist and lead outputs into a Report. A Report Pydantic output.
     You are NOT supposed to review the code in any capacity.
-    Generate a final markdown containing:
-    - Project Name
-    - The findings of the specialized reviewers separated by sections with the lead reviewer's findings at the end.
-    - A final section specifying: --> needs to be done by the lead reviewer
-      - Whether the Pull Request is ready to be merged or declined.
-      - Whether there are any issues that need to be addressed or not.
-      - Merge conflicts if any.
   agent: review_manager
-  markdown: true
-  output_file: output/review_manager.md
-
-   each section should have a title, a "Review Severity level" as Critical, High, Medium, Low and a summary of the findings.

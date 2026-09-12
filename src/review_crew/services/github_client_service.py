@@ -77,17 +77,10 @@ class GithubClientTool(BaseTool):
         url = f"{BASE_URL}/repos/{owner}/{repo}/pulls/{pr_number}"
         response = requests.get(url, headers=self._headers())
         response.raise_for_status()
-<<<<<<< Updated upstream:src/review_crew/github/client.py
         self.pr_metadata = response.json()
         print("Fetched PR metadata")
         print(self.pr_metadata)
         return self.pr_metadata
-=======
-        metadata = response.json()
-        print("Fetched PR metadata")
-        print(metadata)
-        return metadata
->>>>>>> Stashed changes:src/review_crew/services/github_client_service.py
 
     def get_pr_files(self, owner: str, repo: str, pr_number: str) -> list:
         url = f"{BASE_URL}/repos/{owner}/{repo}/pulls/{pr_number}/files"

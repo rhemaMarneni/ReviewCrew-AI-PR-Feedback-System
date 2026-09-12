@@ -13,75 +13,34 @@ warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 # Replace with inputs you want to test with, it will automatically
 # interpolate any tasks and agents information
 
-requirements = """
-A simple user interface for AI based code review on a software project.
-The application takes a GitHub Pull Request URL as input.
-
-From the Pull Request URL, the application:
-1. Identifies the repository, owner, and pull request number.
-2. Retrieves pull request metadata and changed files using the GitHub API.
-3. Retrieves the repository tree at the pull request's head commit.
-4. Provides agents with tools to retrieve additional file contents when needed.
-5. Analyzes the pull request using specialized code reviewers.
-6. Produces a consolidated code review.
-"""
-
 def run(pr_url: str, project_name: str, project_description: str):
     """
     Run the crew.
     """
+    project_info = (
+        f"Project name: {project_name}\n"
+        f"Project description: {project_description}\n"
+        f"Pull request URL: {pr_url}"
+    )
+    file_review_instructions = (
+        "Use the codebase analysis to find files in your lane (and matching changed_files). "
+        f"Read those files with github_client: action=get_file and pr_url={pr_url}. "
+        "Do not review from filenames or the project description alone."
+    )
     inputs = {
         'pr_url': pr_url,
         'project_name': project_name,
         'project_description': project_description,
-        'requirements': requirements,
-        'current_year': str(datetime.now().year)
+        'project_info': project_info,
+        'file_review_instructions': file_review_instructions,
+        'specialist_expected_output': "A SpecialistReview Pydantic output. Use empty lists if there is nothing to report.",
+        'current_year': str(datetime.now().year),
     }
 
     try:
         return ReviewCrew().crew().kickoff(inputs=inputs)
     except Exception as e:
         raise Exception(f"An error occurred while running the crew: {e}")
-
-
-def train():
-    """
-    Train the crew for a given number of iterations.
-    """
-    inputs = {
-        "topic": "AI LLMs",
-        'current_year': str(datetime.now().year)
-    }
-    try:
-        ReviewCrew().crew().train(n_iterations=int(sys.argv[1]), filename=sys.argv[2], inputs=inputs)
-
-    except Exception as e:
-        raise Exception(f"An error occurred while training the crew: {e}")
-
-def replay():
-    """
-    Replay the crew execution from a specific task.
-    """
-    try:
-        ReviewCrew().crew().replay(task_id=sys.argv[1])
-
-    except Exception as e:
-        raise Exception(f"An error occurred while replaying the crew: {e}")
-
-def test():
-    """
-    Test the crew execution and returns the results.
-    """
-    inputs = {
-        "topic": "AI LLMs",
-        "current_year": str(datetime.now().year)
-    }
-
-    try:
-        ReviewCrew().crew().test(n_iterations=int(sys.argv[1]), eval_llm=sys.argv[2], inputs=inputs)
-
-    except Exception as e:
-        raise Exception(f"An error occurred while testing the crew: {e}")
 
 def run_with_trigger():
     """
