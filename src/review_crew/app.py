@@ -1,6 +1,8 @@
 import gradio as gr
 from dotenv import load_dotenv
 
+load_dotenv()
+
 from review_crew.main import run
 
 class ReviewCrewApp:
@@ -29,7 +31,7 @@ class ReviewCrewApp:
             description="Enter a GitHub Pull Request URL to run an AI-assisted code review.",
         )
 
-    def review_crew(self, pr_url: str, project_name: str, project_description: str):
+    def review_crew(self, project_name: str, pr_url: str, project_description: str):
         result = run(pr_url, project_name, project_description)
         return result.raw
 
@@ -38,5 +40,4 @@ class ReviewCrewApp:
 
 
 if __name__ == "__main__":
-    load_dotenv()
     ReviewCrewApp().launch()
